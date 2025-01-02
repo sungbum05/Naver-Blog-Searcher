@@ -1,0 +1,24 @@
+{
+  "name": "naver-blog-searcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sungbum05/Naver-Blog-Searcher.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sungbum05/Naver-Blog-Searcher/issues"
+  },
+  "homepage": "https://github.com/sungbum05/Naver-Blog-Searcher#readme",
+  "dependencies": {
+    "axios": "^1.7.9"
+  }
+}
