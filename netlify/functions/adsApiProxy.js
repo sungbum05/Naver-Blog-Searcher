@@ -12,60 +12,57 @@ exports.handler = async function (event) {
     }
 
     try {
-        const API_KEY = "0100000000d39787e7a99b1ea7aedd90a41e5a137c2f299c3f0c3c3b9edc72532b5f729a5d";
-        const SECRET_KEY = "AQAAAADTl4fnqZsep67dkKQeWhN8+IbWG5dNUnuKq4oK61RJVQ==";
-        const CUSTOMER_ID = "3363318";
+        // 네이버 광고 API 정보
+        const BASE_URL = "https://api.naver.com";
+        const API_KEY = "01000000006ca386a83e9d78486a21b99ee87d2b57d4609fa9f85cbc8dc9a589d5e601e947"; // 네이버 광고 API 엑세스 키
+        const SECRET_KEY = "AQAAAAD74Ks1eDf56l4c8lsqI6sywkBK3BbEAgyZ/URGM9qKAA=="; // 네이버 광고 API 비밀 키
+        const CUSTOMER_ID = "3363318"; // 네이버 광고 API 고객 ID
 
-        const API_URL = "https://api.naver.com/ncc/keywords";
+        // API 요청 설정
+        const uri = "/keywordstool";
+        const method = "GET";
         const timestamp = Date.now().toString();
         const signature = crypto
             .createHmac("sha256", SECRET_KEY)
-            .update(`${timestamp}.${API_KEY}`)
+            .update(`${timestamp}.${method}.${uri}`)
             .digest("base64");
 
-        const response = await axios.get(API_URL, {
-            headers: {
-                "X-Timestamp": timestamp,
-                "X-API-KEY": API_KEY,
-                "X-Customer": CUSTOMER_ID,
-                "X-Signature": signature,
-            },
-            params: { keyword },
-        });
+        const headers = {
+            "Content-Type": "application/json; charset=UTF-8",
+            "X-Timestamp": timestamp,
+            "X-API-KEY": API_KEY,
+            "X-Customer": CUSTOMER_ID,
+            "X-Signature": signature,
+        };
 
+        const params = {
+            hintKeywords: keyword,
+            showDetail: 1,
+        };
+
+        // 네이버 광고 API 호출
+        const response = await axios.get(BASE_URL + uri, { headers, params });
+
+        // 응답 데이터 반환
         return {
             statusCode: 200,
             headers: {
-                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Origin": "*", // CORS 해결
                 "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             },
             body: JSON.stringify(response.data),
         };
     } catch (error) {
-        const statusCode = error.response?.status || 500;
-        const errorMessage = error.response?.data?.message || error.message || "Internal Server Error";
-
-        console.error(`Error: ${statusCode} - ${errorMessage}`);
-
-        // 403 에러 처리
-        if (statusCode === 403) {
-            return {
-                statusCode: 403,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                },
-                body: JSON.stringify({
-                    error: "Forbidden: Access to the Naver Ads API is denied. Please check your API credentials or permissions.",
-                }),
-            };
-        }
+        console.error("Error:", error.response?.data || error.message);
 
         return {
-            statusCode,
+            statusCode: error.response?.status || 500,
             headers: {
                 "Access-Control-Allow-Origin": "*",
             },
-            body: JSON.stringify({ error: errorMessage }),
+            body: JSON.stringify({
+                error: error.response?.data || error.message || "Internal Server Error",
+            }),
         };
     }
 };
