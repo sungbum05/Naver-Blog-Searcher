@@ -5,7 +5,7 @@ exports.handler = async function (event) {
 
     try {
         const response = await axios.get("https://openapi.naver.com/v1/search/blog.json", {
-            params: { query, display: 99 },
+            params: { query, display: 10 },
             headers: {
                 "X-Naver-Client-Id": "t3MUgXzLzdqC41kUfxHW", // 네이버 API 클라이언트 ID
                 "X-Naver-Client-Secret": "vrOnBQoquC", // 네이버 API 클라이언트 시크릿
